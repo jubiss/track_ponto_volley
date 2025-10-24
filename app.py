@@ -3,16 +3,20 @@ from datetime import datetime
 import pandas as pd
 
 def mark_point(player, time, other_time, tipo_ponto, player_session):    
+    set_num = st.session_state.current_set
     if tipo_ponto == "Erro":
         st.session_state.scores[other_time] += 1
+        st.session_state.set_scores[set_num][other_time] += 1
     else:
         st.session_state.scores[player] += 1
         st.session_state.scores[time] += 1
+        st.session_state.set_scores[set_num][time] += 1
     st.session_state.history.append({
         "hora": datetime.now().strftime("%H:%M:%S"),
         "jogador": player_session,
         "tipo": tipo_ponto,
-        "time": time
+        "time": time,
+        "set": set_num
     })
 st.set_page_config(page_title="Beach Volleyball Score", layout="centered")
 
@@ -22,6 +26,8 @@ st.title("🏐 Beach Volleyball Tracker")
 if "game_started" not in st.session_state:
     st.session_state.game_started = False
     st.session_state.scores = {"player1": 0, "player2": 0, "player3": 0, "player4": 0, "time1": 0, "time2": 0}
+    st.session_state.current_set = 1
+    st.session_state.set_scores = {1: {"time1": 0, "time2": 0}}
     st.session_state.history = []
 if not st.session_state.game_started:
     st.subheader("Defina os jogadores")
@@ -37,11 +43,14 @@ if not st.session_state.game_started:
         st.session_state.player3 = player3
         st.session_state.player4 = player4
         st.session_state.scores = {"player1": 0, "player2": 0, "player3": 0, "player4": 0, "time1": 0, "time2": 0}
+        st.session_state.current_set = 1
+        st.session_state.set_scores = {1: {"time1": 0, "time2": 0}}
         st.session_state.history = []
         st.session_state.game_started = True
         st.rerun()
 
 else:
+    st.header(f"Set {st.session_state.current_set}")
     st.header(f"{st.session_state.player1}, {st.session_state.player2} vs {st.session_state.player3}, {st.session_state.player4}")
     st.subheader("Registrar Ponto")
 
@@ -65,9 +74,16 @@ else:
     col1.metric(f"{st.session_state.player1}, {st.session_state.player2}", st.session_state.scores["time1"])
     col2.metric(f"{st.session_state.player3}, {st.session_state.player4}", st.session_state.scores["time2"])
 
+
+    # Exibir placares dos sets
+    st.write("### 🧮 Placar por Set")
+    for set_num, s in st.session_state.set_scores.items():
+        st.write(f"**Set {set_num}:** {s['time1']} x {s['time2']}")
+
     if st.button("↩️ Desfazer último ponto"):
         if st.session_state.history:
             last = st.session_state.history.pop()  # remove o último ponto
+            set_num = last["set"]
             player = [k for k, v in st.session_state.items() if isinstance(v, str) and v == last["jogador"]]
             if player:
                 player_key = player[0]
@@ -77,11 +93,20 @@ else:
                     st.session_state.scores[player_key] -= 1
                 if st.session_state.scores[time_key] > 0:
                     st.session_state.scores[time_key] -= 1
-            st.success(f"Último ponto removido ({last['jogador']} - {last['tipo']})")
+                if st.session_state.set_scores[set_num][time_key] > 0:
+                    st.session_state.set_scores[set_num][time_key] -= 1
+            st.success(f"Último ponto removido ({last['jogador']} - {last['tipo']} - Set {set_num})")
             st.rerun()
         else:
             st.warning("Nenhum ponto para desfazer.")
     st.divider()
+
+    # Finalizar set atual
+    if st.button("🏁 Finalizar Set"):
+        st.session_state.current_set += 1
+        st.session_state.set_scores[st.session_state.current_set] = {"time1": 0, "time2": 0}
+        st.success(f"Set {st.session_state.current_set - 1} finalizado. Novo set iniciado!")
+        st.rerun()
 
     st.subheader("📜 Histórico de pontos")
 
@@ -103,7 +128,7 @@ else:
          
          
             st.session_state.history = edited_df.to_dict("records")
-            st.success("Placar recalculado!")
+            st.success("Placar recalculado com base no histórico (por set)!")
             st.rerun()
         
         csv = df.to_csv(index=False).encode("utf-8")
