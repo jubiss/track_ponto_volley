@@ -73,9 +73,12 @@ def exibir_estatisticas():
         return
 
 def novas_estatisticas():
-    import pandas as pd
-# test = pd.read_csv("beach_volley_20251025_Evando_Arthur_Bassereau_Aye.csv")
-test = pd.DataFrame(st.session_state.history)
+    pass
+import pandas as pd
+import os
+f"""{os.getcwd()}"""
+test = pd.read_csv("beach_volley_20251025_Evando_Arthur_Bassereau_Aye.csv")
+# test = pd.DataFrame(st.session_state.history)
 
 #test.groupby(['jogador', 'tipo']).size().unstack(fill_value=0)
 def estatisticas_jogador(test):

@@ -50,7 +50,7 @@ def importar_historico(uploaded_file):
 
 def mark_point(player, time, other_time, tipo_ponto, player_session, sacador=None, fase=None):
     set_num = st.session_state.current_set
-    if (tipo_ponto == "Erro") or (tipo_ponto == "Erro de saque"):
+    if (tipo_ponto == "Erro Ataque") or (tipo_ponto == "Erro de saque") or (tipo_ponto == "Falta") or (tipo_ponto == "Erro"):
         st.session_state.scores[other_time] += 1
         st.session_state.set_scores[set_num][other_time] += 1
     else:
@@ -83,7 +83,7 @@ def atualizar_sacador(jogador_que_pontuou, time_finalizador, tipo_ponto):
         return
 
     # 🔹 Caso 2: Erro de saque — troca para o outro time e alterna sacador
-    if (tipo_ponto == "Erro de saque") or (tipo_ponto == "Erro"):
+    if (tipo_ponto == "Erro de saque") or (tipo_ponto == "Erro Ataque"):
         proximo_time = "time2" if time_finalizador == "time1" else "time1"
         st.session_state.time_sacando = proximo_time
         st.session_state.sacador_index[proximo_time] = 1 - st.session_state.sacador_index[proximo_time]
@@ -106,7 +106,7 @@ def point_selection(selecao_ponto):
     # time_sacando = st.session_state.time_sacando
     # indice = st.session_state.sacador_index[time_sacando]
     # sacador_sugerido = st.session_state.sacadores[time_sacando][indice]    
-    tipos_de_ponto = ["Ataque", "Erro", "Bloqueio"]
+    tipos_de_ponto = ["Ataque", "Erro Ataque", "Bloqueio", "Falta", "Erro"]
     # Selecionar quem sacou o ponto atual
     c1, c2, c3 = st.columns([4, 1, 1])
     sacador = c1.radio(
@@ -175,7 +175,8 @@ def point_selection(selecao_ponto):
             "Ace": "#2ecc71",            # verde
             "Ataque": "#27ae60",         # verde escuro
             "Bloqueio": "#9b59b6",       # roxo
-            "Erro": "#e74c3c",           # vermelho
+            "Erro de ataque": "#e74c3c",           # vermelho
+            "Falta": "#f39c12",          # laranja
             "Erro de saque": "#c0392b"   # vermelho escuro
         }
 
@@ -210,19 +211,19 @@ def point_selection(selecao_ponto):
                 st.markdown(f"**{nome}**")
                 # Botão verde = ponto positivo
             for tipo in tipos_de_ponto:
-                cor = tipo_cores[tipo]
-                button_html = f"""
-                    <button style="background-color:{cor};
-                                    width:100%;
-                                    height:46px;
-                                    border:none;
-                                    border-radius:10px;
-                                    font-weight:600;
-                                    margin-bottom:4px;
-                                    cursor:pointer;">
-                        {tipo}
-                    </button>
-                """
+                # cor = tipo_cores[tipo]
+                # button_html = f"""
+                #     <button style="background-color:{cor};
+                #                     width:100%;
+                #                     height:46px;
+                #                     border:none;
+                #                     border-radius:10px;
+                #                     font-weight:600;
+                #                     margin-bottom:4px;
+                #                     cursor:pointer;">
+                #         {tipo}
+                #     </button>
+                # """
                 # Usar st.markdown com HTML + JS para detectar cliques
                 # Simula um botão real com JavaScript postMessage
                 clicked = col.button(tipo, key=f"{nome}_{tipo}", use_container_width=True)
@@ -350,6 +351,7 @@ else:
             last = st.session_state.history.pop()  # remove o último ponto
             set_num = last["set"]
             player = [k for k, v in st.session_state.items() if isinstance(v, str) and v == last["jogador"]]
+            
             if player:
                 player_key = player[0]
                 time_key = last["time"].lower().replace(" ", "")
