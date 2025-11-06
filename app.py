@@ -48,7 +48,7 @@ def importar_historico(uploaded_file):
         st.error(f"Erro ao importar histórico: {e}")
 
 
-def mark_point(player, time, other_time, tipo_ponto, player_session, sacador=None, fase=None):
+def mark_point(player, time, other_time, tipo_ponto, player_session, sacador=None, fase=None, time_saque=None):
     set_num = st.session_state.current_set
     if ((tipo_ponto == "Erro Ataque") or (tipo_ponto == "Erro de saque") or (tipo_ponto == "Falta") or (tipo_ponto == "Erro") or
     (tipo_ponto == "Erro Bloqueio") or (tipo_ponto == "Erro defesa")):
@@ -65,7 +65,8 @@ def mark_point(player, time, other_time, tipo_ponto, player_session, sacador=Non
         "time": time,
         "set": set_num,
         "sacador": sacador,
-        "fase": fase
+        "fase": fase,
+        "time_saque": time_saque
     })
 
 def atualizar_sacador(jogador_que_pontuou, time_finalizador, tipo_ponto):
@@ -117,28 +118,48 @@ def point_selection(selecao_ponto):
         index=1,
         key="sacador_atual"
     )
+    if sacador == st.session_state.player1 or sacador == st.session_state.player2:
+        time_saque = "time1"
+    elif sacador == st.session_state.player3 or sacador == st.session_state.player4:
+        time_saque = "time2"
 
     if c2.button("Acerto de saque (Ace)"):
         fase = "K0"
         if sacador == st.session_state.player1:
-            mark_point(player='player1', time='time1', other_time='time2', tipo_ponto='Ace', player_session=sacador, sacador=sacador, fase=fase)
+            mark_point(
+                player='player1', time='time1', other_time='time2', tipo_ponto='Ace', player_session=sacador, sacador=sacador, fase=fase,
+                time_saque=time_saque)
         if sacador == st.session_state.player2:
-            mark_point(player='player2', time='time1', other_time='time2', tipo_ponto='Ace', player_session=sacador, sacador=sacador, fase=fase)
+            mark_point(
+                player='player2', time='time1', other_time='time2', tipo_ponto='Ace', player_session=sacador, sacador=sacador, fase=fase,
+                time_saque=time_saque)
         if sacador == st.session_state.player3:
-            mark_point(player='player3', time='time2', other_time='time1', tipo_ponto='Ace', player_session=sacador, sacador=sacador, fase=fase)
+            mark_point(
+                player='player3', time='time2', other_time='time1', tipo_ponto='Ace', player_session=sacador, sacador=sacador, fase=fase,
+                time_saque=time_saque)
         if sacador == st.session_state.player4:
-            mark_point(player='player4', time='time2', other_time='time1', tipo_ponto='Ace', player_session=sacador, sacador=sacador, fase=fase)
+            mark_point(
+                player='player4', time='time2', other_time='time1', tipo_ponto='Ace', player_session=sacador, sacador=sacador, fase=fase,
+                time_saque=time_saque)
 
     if c3.button("Erro de saque"):
         fase = "K0"
         if sacador == st.session_state.player1:
-            mark_point(player='player1', time='time1', other_time='time2', tipo_ponto='Erro de saque', player_session=sacador, sacador=sacador, fase=fase)
+            mark_point(
+                player='player1', time='time1', other_time='time2', tipo_ponto='Erro de saque', player_session=sacador, sacador=sacador, 
+                fase=fase, time_saque=time_saque)
         if sacador == st.session_state.player2:
-            mark_point(player='player2', time='time1', other_time='time2', tipo_ponto='Erro de saque', player_session=sacador, sacador=sacador, fase=fase)
+            mark_point(
+                player='player2', time='time1', other_time='time2', tipo_ponto='Erro de saque', player_session=sacador, sacador=sacador, 
+                fase=fase, time_saque=time_saque)
         if sacador == st.session_state.player3:
-            mark_point(player='player3', time='time2', other_time='time1', tipo_ponto='Erro de saque', player_session=sacador, sacador=sacador, fase=fase)
+            mark_point(
+                player='player3', time='time2', other_time='time1', tipo_ponto='Erro de saque', player_session=sacador, sacador=sacador, 
+                fase=fase, time_saque=time_saque)
         if sacador == st.session_state.player4:
-            mark_point(player='player4', time='time2', other_time='time1', tipo_ponto='Erro de saque', player_session=sacador, sacador=sacador, fase=fase)
+            mark_point(
+                player='player4', time='time2', other_time='time1', tipo_ponto='Erro de saque', player_session=sacador, sacador=sacador, 
+                fase=fase, time_saque=time_saque)
 
     # Selecionar fase da jogada
     fase = st.radio(
@@ -229,7 +250,7 @@ def point_selection(selecao_ponto):
                 # Simula um botão real com JavaScript postMessage
                 clicked = col.button(tipo, key=f"{nome}_{tipo}", use_container_width=True)
                 if clicked:
-                    mark_point(player_key, time, other_time, tipo, nome, sacador=sacador, fase=fase)
+                    mark_point(player_key, time, other_time, tipo, nome, sacador=sacador, fase=fase, time_saque=time_saque)
 
 def check_set_end():
     set_num = st.session_state.current_set

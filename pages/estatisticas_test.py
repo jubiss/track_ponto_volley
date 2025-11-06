@@ -2,13 +2,19 @@ import streamlit as st
 import pandas as pd
 
 
-# test = pd.DataFrame(st.session_state.history)
+test = pd.DataFrame(st.session_state.history)
 # test = pd.read_csv("beach_volley_20251025_Evando_Arthur_Bassereau_Aye.csv")
-test = pd.read_csv("pages/beach_volley_20251105_Carol_Rebecca_Ana Patrícia_Duda.csv")
-st.dataframe(test, hide_index=True, use_container_width=True)
+# test = pd.read_csv("pages/beach_volley_20251105_Carol_Rebecca_Ana Patrícia_Duda.csv")
 
 time_1 = test[test['time'] == 'time1']['jogador'].unique()
 time_2 = test[test['time'] == 'time2']['jogador'].unique()
+
+
+def treat_game_data(test):
+    erros_pontos = ["Erro Ataque", "Erro de saque", "Erro", "Falta", "Erro Bloqueio", "Erro defesa"]
+    test['time_ponto'] = test.apply(
+        lambda row: row['time'] if row['tipo'] not in erros_pontos else ('time2' if row['time'] == 'time1' else 'time1'), axis=1)
+    return test
 
 def estatisticas_jogador(test):
     time_1 = test[test['time'] == 'time1']['jogador'].unique()
@@ -65,6 +71,9 @@ def highlight_first_two_rows(row):
         return ['background-color: #e0eaff'] * len(row)
     else:
         return [''] * len(row)
+
+test = treat_game_data(test)
+st.dataframe(test, hide_index=True, use_container_width=True)
 
 all_statistics_player = estatisticas_jogador(test)
 all_statistics_player['percentual_erro_saques'] = all_statistics_player['Erro de saque'] / all_statistics_player['total_saques'] * 100
