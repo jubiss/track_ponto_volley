@@ -50,7 +50,8 @@ def importar_historico(uploaded_file):
 
 def mark_point(player, time, other_time, tipo_ponto, player_session, sacador=None, fase=None):
     set_num = st.session_state.current_set
-    if (tipo_ponto == "Erro Ataque") or (tipo_ponto == "Erro de saque") or (tipo_ponto == "Falta") or (tipo_ponto == "Erro"):
+    if ((tipo_ponto == "Erro Ataque") or (tipo_ponto == "Erro de saque") or (tipo_ponto == "Falta") or (tipo_ponto == "Erro") or
+    (tipo_ponto == "Erro Bloqueio") or (tipo_ponto == "Erro defesa")):
         st.session_state.scores[other_time] += 1
         st.session_state.set_scores[set_num][other_time] += 1
     else:
@@ -106,7 +107,7 @@ def point_selection(selecao_ponto):
     # time_sacando = st.session_state.time_sacando
     # indice = st.session_state.sacador_index[time_sacando]
     # sacador_sugerido = st.session_state.sacadores[time_sacando][indice]    
-    tipos_de_ponto = ["Ataque", "Erro Ataque", "Bloqueio", "Falta", "Erro"]
+    tipos_de_ponto = ["Ataque", "Erro Ataque", "Bloqueio", "Falta", "Erro", "Erro Bloqueio", "Erro defesa"]
     # Selecionar quem sacou o ponto atual
     c1, c2, c3 = st.columns([4, 1, 1])
     sacador = c1.radio(
@@ -117,7 +118,7 @@ def point_selection(selecao_ponto):
         key="sacador_atual"
     )
 
-    if c2.button("Ace"):
+    if c2.button("Acerto de saque (Ace)"):
         fase = "K0"
         if sacador == st.session_state.player1:
             mark_point(player='player1', time='time1', other_time='time2', tipo_ponto='Ace', player_session=sacador, sacador=sacador, fase=fase)

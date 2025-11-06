@@ -2,27 +2,45 @@ import streamlit as st
 import pandas as pd
 
 
-test = pd.DataFrame(st.session_state.history)
-st.dataframe(test, hide_index=True, use_container_width=True)
+# test = pd.DataFrame(st.session_state.history)
 # test = pd.read_csv("beach_volley_20251025_Evando_Arthur_Bassereau_Aye.csv")
+test = pd.read_csv("pages/beach_volley_20251105_Carol_Rebecca_Ana Patrícia_Duda.csv")
+st.dataframe(test, hide_index=True, use_container_width=True)
+
 time_1 = test[test['time'] == 'time1']['jogador'].unique()
 time_2 = test[test['time'] == 'time2']['jogador'].unique()
 
 def estatisticas_jogador(test):
-    total_erros = test[test['tipo'].isin(['Erro de saque', 'Erro'])].groupby(['jogador', 'time']).agg(total_erros = ('jogador', 'count')).reset_index()
-    total_pontos = test[~test['tipo'].isin(['Erro de saque', 'Erro'])].groupby(['jogador', 'time']).agg(total_pontos = ('jogador', 'count')).reset_index()
+    time_1 = test[test['time'] == 'time1']['jogador'].unique()
+    time_2 = test[test['time'] == 'time2']['jogador'].unique()
+    
+    erros_pontos = ["Erro Ataque", "Erro de saque", "Erro", "Falta", "Erro Bloqueio", "Erro defesa"]
+    
+    total_erros = test[test['tipo'].isin(erros_pontos)].groupby(['jogador', 'time']).agg(total_erros = ('jogador', 'count')).reset_index()
+    total_pontos = test[~test['tipo'].isin(erros_pontos)].groupby(['jogador', 'time']).agg(total_pontos = ('jogador', 'count')).reset_index()
     # perc_fases = test[test['fase'].notnull()].groupby(['jogador', 'time', 'fase']).agg(total_fases = ('jogador', 'count')).reset_index()
     total_saques = test.groupby(['sacador']).agg(total_saques = ('jogador', 'count')).reset_index().rename(columns={'sacador': 'jogador'})
     fundamentos_pontos = test.pivot_table(index=['jogador', 'time'], columns='tipo', aggfunc='size', fill_value=0).reset_index()
-    fase_ponto = test.pivot_table(index=['jogador', 'time'], columns='fase', aggfunc='size', fill_value=0).reset_index()
+    fase_ponto = test[~test['tipo'].isin(erros_pontos)].pivot_table(index=['jogador', 'time'], columns='fase', aggfunc='size', fill_value=0).reset_index()
+    fase_ponto_test = test.pivot_table(index=['jogador', 'time'], columns=['fase', 'tipo'], aggfunc='size', fill_value=0).reset_index()
+    saques_time_1 = test[test['sacador'].isin(time_1)]['sacador'].count()
+    saques_time_2 = test[test['sacador'].isin(time_2)]['sacador'].count()
+    st.dataframe(fase_ponto_test)
     all_statistics_player = total_erros.merge(total_pontos, how='outer', on=['jogador', 'time']).merge(total_saques, how='outer', on=['jogador']).merge(fase_ponto, how='outer', on=['jogador', 'time']).merge(fundamentos_pontos, how='outer', on=['jogador', 'time']).fillna(0)
     all_statistics_player['percentual_erro_saques'] = all_statistics_player['Erro de saque'] / all_statistics_player['total_saques'] * 100
     all_statistics_player['percentual_ace'] = all_statistics_player['Ace'] / all_statistics_player['total_saques'] * 100
+    all_statistics_player['total_saque_time_adversario'] = 0
+    all_statistics_player.loc[all_statistics_player['time'] == 'time1', 'total_saque_time_adversario'] = saques_time_2
+    all_statistics_player.loc[all_statistics_player['time'] == 'time2', 'total_saque_time_adversario'] = saques_time_1
+    all_statistics_player['total_saque_time'] = 0
+    all_statistics_player.loc[all_statistics_player['time'] == 'time1', 'total_saque_time'] = saques_time_1
+    all_statistics_player.loc[all_statistics_player['time'] == 'time2', 'total_saque_time'] = saques_time_2
     return all_statistics_player
 
 def estatisticas_time(test):
-    total_erros = test[test['tipo'].isin(['Erro de saque', 'Erro'])].groupby(['time']).agg(total_erros = ('jogador', 'count')).reset_index()
-    total_pontos = test[~test['tipo'].isin(['Erro de saque', 'Erro'])].groupby(['time']).agg(total_pontos = ('jogador', 'count')).reset_index()
+    erros_pontos = ["Erro Ataque", "Erro de saque", "Erro", "Falta", "Erro Bloqueio", "Erro defesa"]
+    total_erros = test[test['tipo'].isin(erros_pontos)].groupby(['time']).agg(total_erros = ('jogador', 'count')).reset_index()
+    total_pontos = test[~test['tipo'].isin(erros_pontos)].groupby(['time']).agg(total_pontos = ('jogador', 'count')).reset_index()
     # perc_fases = test[test['fase'].notnull()].groupby(['jogador', 'time', 'fase']).agg(total_fases = ('jogador', 'count')).reset_index()
     total_saques = test.groupby(['time']).agg(total_saques = ('jogador', 'count')).reset_index().rename(columns={'sacador': 'jogador'})
     fundamentos_pontos = test.pivot_table(index=[ 'time'], columns='tipo', aggfunc='size', fill_value=0).reset_index()
@@ -41,6 +59,13 @@ def estatisticas_time(test):
     total_ponto_adversario = pd.concat([total_saque_pontos_time1, total_saque_pontos_time2], ignore_index=True)
     all_statistics = all_statistics.merge(total_ponto_adversario, how='left', on='time')
     return all_statistics
+
+def highlight_first_two_rows(row):
+    if row.time in ["time2"]:
+        return ['background-color: #e0eaff'] * len(row)
+    else:
+        return [''] * len(row)
+
 all_statistics_player = estatisticas_jogador(test)
 all_statistics_player['percentual_erro_saques'] = all_statistics_player['Erro de saque'] / all_statistics_player['total_saques'] * 100
 all_statistics_player['percentual_ace'] = all_statistics_player['Ace'] / all_statistics_player['total_saques'] * 100
@@ -53,8 +78,6 @@ statistics_time['percentual_k2_ponto'] = statistics_time['K2 (com saque)'] / sta
 
 all_statistics_player = all_statistics_player.rename(columns={'jogador': 'Atleta'})
 
-df = pd.DataFrame(dados)
-st.dataframe(test)
 st.dataframe(all_statistics_player)
 st.dataframe(statistics_time)
 # ===== CSS customizado =====
@@ -156,7 +179,7 @@ with col2:
         st.session_state.time_selected = "time2"
 
 # ===== Tabs de fundamentos =====
-abas = ["Pontuação", "Ataque", "Bloqueio", "Saque", "Recepção", "Defesa"]
+abas = ["Pontuação", "Ataque", "Bloqueio", "Saque", "Recepção", "Defesa", "Fases"]
 selected_tab = st.segmented_control("Escolha a estatística:", abas, default="Pontuação")
 
 # ===== Tabela =====
@@ -164,22 +187,32 @@ st.markdown('<div class="table-container">', unsafe_allow_html=True)
 st.markdown(f"### 🟢 {selected_tab}")
 
 if selected_tab == "Pontuação":
-    pontuacao = all_statistics_player[['Atleta', 'time', 'total_pontos', 'Ataque', 'Bloqueio', 'Ace']].copy()
-    pontuacao = pontuacao[pontuacao['time'] == st.session_state.time_selected].rename(columns={'total_pontos': 'Pontos', 'Ataque': 'Ataque', 'Bloqueio': 'Bloqueio', 'Ace': 'Saque'})
-    st.dataframe(pontuacao.drop(columns=['time']), hide_index=True)
+    pontuacao = all_statistics_player[['Atleta', 'time', 'total_pontos', 'Ataque', 'Bloqueio', 'Ace', 'total_erros']].copy()
+    # pontuacao[pontuacao['time'] == st.session_state.time_selected]
+    pontuacao = pontuacao.rename(columns={
+        'total_pontos': 'Pontos', 'Ataque': 'Ataque', 'Bloqueio': 'Bloqueio', 'Ace': 'Saque',
+        'total_erros': 'Erros'})
+    pontuacao['Eficiência'] = (pontuacao['Pontos'] - pontuacao['Erros'])/(pontuacao['Pontos'] + pontuacao['Erros']) * 100
+    pontuacao = pontuacao.sort_values(by=['time']).reset_index(drop=True)
+    # st.dataframe(pontuacao.drop(columns=['time']), hide_index=True)
+    st.dataframe(pontuacao.style.apply(highlight_first_two_rows, axis=1), hide_index=True)
 
 elif selected_tab == "Ataque":
-    ataque = all_statistics_player[['Atleta', 'time', 'Ataque']].copy()
-    ataque = ataque[ataque['time'] == st.session_state.time_selected]
-    st.dataframe(ataque.drop(columns=['time']), hide_index=True)
-
+    ataque = all_statistics_player[['Atleta', 'time', 'Ataque', 'Erro Ataque']].copy()
+    # ataque = ataque[ataque['time'] == st.session_state.time_selected]
+    # st.dataframe(ataque.drop(columns=['time']), hide_index=True)
+    ataque = ataque.sort_values(by=['time'])
+    st.dataframe(ataque.style.apply(highlight_first_two_rows, axis=1), hide_index=True)
 elif selected_tab == "Bloqueio":
-    bloqueio = all_statistics_player[['Atleta', 'time', 'Bloqueio']].copy()
-    bloqueio = bloqueio[bloqueio['time'] == st.session_state.time_selected]
-    st.dataframe(bloqueio.drop(columns=['time']), hide_index=True)
+    bloqueio = all_statistics_player[['Atleta', 'time', 'Bloqueio', 'Erro Bloqueio']].copy()
+    # bloqueio = bloqueio[bloqueio['time'] == st.session_state.time_selected]
+    # st.dataframe(bloqueio.drop(columns=['time']), hide_index=True)
+    bloqueio = bloqueio.sort_values(by='time')
+    st.dataframe(bloqueio.style.apply(highlight_first_two_rows, axis=1), hide_index=True)
 elif selected_tab == "Saque":
     saque = all_statistics_player[['Atleta', 'time', 'Ace', 'Erro de saque', 'total_saques', 'percentual_ace', 'percentual_erro_saques']].copy()
-    saque = saque[saque['time'] == st.session_state.time_selected].rename(columns={
+    # [saque['time'] == st.session_state.time_selected]
+    saque = saque.rename(columns={
         'Ace': 'Aces',
         'Erro de saque': 'Erros de Saque',
         'total_saques': 'Total de Saques',
@@ -187,7 +220,17 @@ elif selected_tab == "Saque":
         'percentual_erro_saques': '% Erros de Saque'
     })
     saque['Neutro'] = saque['Total de Saques'] - (saque['Aces'] + saque['Erros de Saque'])
-    st.dataframe(
-        saque[['Atleta', 'Aces', 'Neutro', 'Erros de Saque', 'Total de Saques', '% Aces', '% Erros de Saque']],
-        hide_index=True)
+    saque = saque[['Atleta', 'time', 'Aces', 'Neutro', 'Erros de Saque', 'Total de Saques', '% Aces', '% Erros de Saque']
+              ].sort_values(by='time')
+    st.dataframe(saque.style.apply(highlight_first_two_rows, axis=1), hide_index=True)
+elif selected_tab == "Fases":
+    fases = all_statistics_player[
+        ['Atleta', 'time', 'K0', 'K1 (side-out)', 'K2 (com saque)', 'total_saque_time_adversario', 'total_saque_time']].copy()
+    fases['Percentual K1'] = fases['K1 (side-out)'] / fases['total_saque_time_adversario'] * 100
+    fases['Percentual K2'] = fases['K2 (com saque)'] / fases['total_saque_time'] * 100
+    fases = fases[[
+        'Atleta', 'time', 'K0', 'K1 (side-out)', 'K2 (com saque)', 
+        'Percentual K1', 'Percentual K2', 'total_saque_time_adversario', 'total_saque_time']
+        ].rename(columns={'total_saque_time_adversario': 'Total saques outro time', 'total_saque_time': 'Total saques time'}).sort_values(by='time')
+    st.dataframe(fases.style.apply(highlight_first_two_rows, axis=1), hide_index=True)
 st.markdown("</div>", unsafe_allow_html=True)

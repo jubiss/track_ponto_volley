@@ -1,0 +1,38 @@
+hora,jogador,tipo,time,set,sacador,fase
+14:41:53,Rebecca,Erro de saque,time1,1,Rebecca,K0
+14:42:10,Rebecca,Ataque,time1,1,Duda,K1 (side-out)
+14:42:35,Duda,Ataque,time2,1,Carol,K1 (side-out)
+14:42:59,Rebecca,Erro Ataque,time1,1,Ana Patrícia,K1 (side-out)
+14:43:14,Ana Patrícia,Ace,time2,1,Ana Patrícia,K0
+14:43:32,Rebecca,Ataque,time1,1,Ana Patrícia,K1 (side-out)
+14:44:15,Carol,Bloqueio,time1,1,Rebecca,K2 (com saque)
+14:44:38,Rebecca,Ataque,time1,1,Rebecca,K2 (com saque)
+14:44:56,Rebecca,Ace,time1,1,Rebecca,K0
+14:45:12,Rebecca,Erro de saque,time1,1,Rebecca,K0
+14:45:54,Ana Patrícia,Erro Bloqueio,time2,1,Duda,Outro
+14:46:07,Duda,Ataque,time2,1,Carol,K1 (side-out)
+14:46:26,Rebecca,Ataque,time1,1,Ana Patrícia,K1 (side-out)
+14:46:45,Ana Patrícia,Ataque,time2,1,Rebecca,K1 (side-out)
+14:47:11,Rebecca,Ataque,time1,1,Duda,K1 (side-out)
+14:47:40,Ana Patrícia,Ataque,time2,1,Carol,K1 (side-out)
+14:48:00,Rebecca,Ataque,time1,1,Ana Patrícia,K1 (side-out)
+14:48:35,Carol,Bloqueio,time1,1,Rebecca,K2 (com saque)
+14:49:04,Rebecca,Erro de saque,time1,1,Rebecca,K0
+14:49:25,Rebecca,Erro Ataque,time1,1,Duda,K1 (side-out)
+14:49:44,Duda,Ataque,time2,1,Duda,Outro
+14:50:37,Duda,Ataque,time2,1,Duda,K2 (com saque)
+14:50:57,Carol,Erro Ataque,time1,1,Duda,K1 (side-out)
+14:51:24,Ana Patrícia,Bloqueio,time2,1,Duda,K2 (com saque)
+14:51:41,Carol,Ataque,time1,1,Duda,K1 (side-out)
+14:52:05,Ana Patrícia,Ataque,time2,1,Carol,K1 (side-out)
+14:52:35,Rebecca,Ataque,time1,1,Ana Patrícia,K1 (side-out)
+14:52:48,Duda,Ataque,time2,1,Rebecca,K1 (side-out)
+14:53:17,Carol,Ataque,time1,1,Duda,K1 (side-out)
+14:53:37,Duda,Ataque,time2,1,Carol,K1 (side-out)
+14:54:07,Duda,Ataque,time2,1,Ana Patrícia,K2 (com saque)
+14:54:24,Rebecca,Ataque,time1,1,Ana Patrícia,K1 (side-out)
+14:54:49,Carol,Bloqueio,time1,1,Rebecca,K2 (com saque)
+14:55:03,Rebecca,Erro de saque,time1,1,Rebecca,K0
+14:55:22,Carol,Ataque,time1,1,Duda,K1 (side-out)
+14:55:54,Duda,Ataque,time2,1,Carol,K1 (side-out)
+14:56:14,Duda,Ataque,time2,1,Ana Patrícia,K2 (com saque)
