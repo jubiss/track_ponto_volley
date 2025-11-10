@@ -310,6 +310,7 @@ if not st.session_state.game_started:
         st.session_state.player2 = player2
         st.session_state.player3 = player3
         st.session_state.player4 = player4
+        # TODO Trocar string "player1" por variável player1, fazer mudanças em todas as partes de código que utilizam .scores
         st.session_state.scores = {"player1": 0, "player2": 0, "player3": 0, "player4": 0, "time1": 0, "time2": 0}
         st.session_state.current_set = 1
         st.session_state.set_scores = {1: {"time1": 0, "time2": 0}}

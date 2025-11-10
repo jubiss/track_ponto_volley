@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 
 
-test = pd.DataFrame(st.session_state.history)
+# test = pd.DataFrame(st.session_state.history)
 # test = pd.read_csv("beach_volley_20251025_Evando_Arthur_Bassereau_Aye.csv")
-# test = pd.read_csv("pages/beach_volley_20251105_Carol_Rebecca_Ana Patrícia_Duda.csv")
+test = pd.read_csv("pages/beach_volley_20251105_Carol_Rebecca_Ana Patrícia_Duda.csv")
 
 time_1 = test[test['time'] == 'time1']['jogador'].unique()
 time_2 = test[test['time'] == 'time2']['jogador'].unique()

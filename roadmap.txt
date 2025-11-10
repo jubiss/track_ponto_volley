@@ -1,0 +1,4 @@
+- Adicionar o processo de continúidade dentro da avaliação atual de pontos, para avaliar o K0, K1, e K2
+- Adicionar quem recebeu a bola para a efetuação do K1, e defensor do K2
+- Focar no desenvolvimento da avaliação do fundamento K1, análise mais focada
+- Pensar no desenvolvimento de um banco de dados na Cloud que seja responsável por receber os dados preenchidos
