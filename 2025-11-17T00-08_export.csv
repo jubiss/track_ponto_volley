@@ -1,0 +1,13 @@
+﻿,Complexo,Etapa,Acao,Qualidade,Jogador,Lance,Ponto
+0,K1,Fase1,Passe,A,player1,0,0
+0,K1,Fase2,Levantamento,A,player2,1,0
+0,K1,Fase3,Ataque Diagonal,Ponto,player1,2,0
+0,K1,Fase1,Passe,A,player2,0,1
+0,K1,Fase2,Levantamento,B,player1,1,1
+0,K1,Fase3,Ataque no meio,Erro,player2,2,1
+0,K1,Fase1,Passe,A,player2,0,2
+0,K1,Fase2,Levantamento,A,player1,1,2
+0,K1,Fase3,Ataque no meio,A,player2,2,2
+0,K1,Fase1,Passe,B,player1,0,3
+0,K1,Fase2,Levantamento,A,player2,1,3
+0,K1,Fase3,Ataque Diagonal,A,player1,2,3
