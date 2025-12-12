@@ -1,5 +1,37 @@
 import streamlit as st
 import pandas as pd
+from dataclasses import dataclass
+
+@dataclass
+class Jogador():
+    nome: str
+    id_user: str
+    pontos: int
+    erros: int
+
+@dataclass
+class Time():
+    id: str
+    nome: str
+    jogadores: list[Jogador]
+    pontos: int
+    erros: int
+
+@dataclass
+class Jogo():
+    id: str
+    link_video_jogo : str|None = None
+    ponto_time_1 : int = 0
+    ponto_time2 : int = 0
+    set_jogo : int = 1
+    sacador_atual : Jogador|None = None
+    time_sacando : Time|None = None
+
+@dataclass
+class Acao():
+    jogador: Jogador
+    complexo: 
+    
 
 if "lance" not in st.session_state:
     st.session_state.players = ["player1", "player2"]
